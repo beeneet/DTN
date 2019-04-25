@@ -113,8 +113,10 @@ app.post('/signup',function(req,res){
 	console.log(signup);
 	var usr_list = {connection:connection,fname:fname,lname:lname, email:email, password1:password1 , password2:password2};
 	console.log(usr_list);
-	
-	fs.writeFile('requests/sign_up_requests/'+'user_'+String(getSignupID())+'.json',JSON.stringify(usr_list), function(err, signup){
+	file_counts= fs.readFileSync("count.json"); // for counting the signup 
+	track_count = JSON.parse(file_counts)
+	count = track_count.count;
+	fs.writeFile('requests/sign_up_requests/'+'signup'+count+'.json',JSON.stringify(usr_list), function(err, signup){
 		if (err) {
 			console.log(err)
 			res.status(404).end();
