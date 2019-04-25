@@ -62,12 +62,21 @@ def generate_confirmation(user, response, filename):
 	email = user['email']
 	temp = email +' ' + res 				#format : abc@xyz.com SUCCESS
 	conf_data=[temp]
-	with open(CONFIRMATION_SIGNUP_FOLDER_PATH+ filename+'_confirmation.json','w+') as f:
+	temp_fname = CONFIRMATION_SIGNUP_FOLDER_PATH+ filename+'.json'
+	with open(temp_fname,'w+') as f:
 		json.dump(conf_data, f)
+	write_delimiter(temp_fname)
+
+
 
 def fulfill_order():	#temp function
 	# print("ORDER TEST")
 	pass
+
+def write_delimiter(fname):
+	with open(fname, 'a') as input:
+		input.write("=====")
+	input.close()
 
 def sign_up():
 	initialize()
