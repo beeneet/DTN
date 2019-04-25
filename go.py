@@ -75,7 +75,7 @@ def fulfill_order():	#temp function
 
 def write_delimiter(fname):
 	with open(fname, 'a') as input:
-		input.write("=====")
+		input.write("\n=====")
 	input.close()
 
 def sign_up():
