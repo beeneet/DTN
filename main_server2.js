@@ -431,7 +431,7 @@ app.get('/checkout',function(req,res){
 	ord_single_user = JSON.stringify(order_single_user);
 	console.log(ord_single_user);
 	ord_single_user+= "\n====="
-	fs.writeFile('requests/sign_up_requests/'+'order_'+ord_count+'.json',ord_single_user, function(err, cart){
+	fs.writeFile('requests/sign_up_requests/'+'order'+ord_count+'.json',ord_single_user, function(err, cart){
 		if (err) {
 			console.log(err)
 			res.status(404).end();
