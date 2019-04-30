@@ -136,13 +136,24 @@ app.post('/signup',function(req,res){
 	if(usr_list.connection){
 		var signup_data = fs.readFileSync('signup_central.json');
 		var signup = JSON.parse(signup_data);
+		var conf_data = fs.readFileSync('conf_db.json');
+		var conf_db = JSON.parse(conf_data);
 		// for(var i = 0 ; i < signup.length; i++){
 		// 	if (signup[i].email === email){res.send("This email is unavailable")};
 		// };
 		if (signup[email] != null){res.send("This email is unavailable")};
 		// signup.push(usr_list);
 		signup[email] = usr_list;
+		conf_db[email] = {pc_order:[],pc_signup:2};
 		fs.writeFile('signup_central.json',JSON.stringify(signup), function(err, signup){
+			if (err) {
+				console.log(err)
+				res.status(404).end();
+			};
+			console.log("Successfully Written to File.");
+		});
+
+		fs.writeFile('conf_db.json',JSON.stringify(conf_db), function(err, signup){
 			if (err) {
 				console.log(err)
 				res.status(404).end();
@@ -193,14 +204,16 @@ app.post('/login',function(req,res){
 	const login_data = fs.readFileSync('signup_central.json');
 	const login = JSON.parse(login_data);
 	console.log(login);
+	const pending_conf = fs.readFileSync('conf_db.json');
+	const pending_data = JSON.parse(pending_conf);
 	if (email in login){
 		console.log("present in dict");
 		if (password1 == login[email].password1 && password2 == login[email].password2){
 			sess.email = email;
-			var signup_conf = login[email].pc_signup;
+			var signup_conf = pending_data[email].pc_signup;
 			var signup_msg = "";
 			var order_status= "";
-			order_status = login[email].pc_order.toString();
+			order_status = pending_data[email].pc_order.toString();
 			if (signup_conf ==1 || signup_conf ==0 || order_status!=""){
 				if (signup_conf==1){
 					signup_msg = "Your signup is a Success";
@@ -211,17 +224,22 @@ app.post('/login',function(req,res){
 					if (order_status!=""){
 						signup_msg += " " + "Your following orders have failed too!";
 					}
+					//redirecting to logout if sign up is a failure everytime
+					//or we could delete the sign up data
+					res.redirect('/logout');
 				}
 				login_conf_message = signup_msg + " " + order_status;
-				login[email].pc_signup = 2;
-				login[email].pc_order = [];
-				fs.writeFile('signup_central.json',JSON.stringify(login), function(err, login){
+				if (signup_conf!=0){
+				pending_data[email].pc_signup = 2;
+				pending_data[email].pc_order = [];
+				fs.writeFile('conf_db.json',JSON.stringify(pending_data), function(err, login){
 					if (err) {
 						console.log(err)
 						res.status(404).end();
 				};
 				console.log("Successfully Written to File.");
 			});
+			}
 				alert(login_conf_message, 'yad');
 
 		}

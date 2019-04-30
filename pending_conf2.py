@@ -10,7 +10,7 @@ CONFIRMATION_ORDER_FOLDER_PATH = CONFIRMATION_SIGNUP_FOLDER_PATH
 FAIL = 'FAIL'
 SUCCESS = 'SUCCESS'
 
-SIGNUP_CENTRAL_DIRECTORY = 'signup_central.json'
+CONFIRMATIONS_DB = 'conf_db.json'
 
 
 import json
@@ -45,7 +45,7 @@ def update_signup_c_pending(local_db, filename):
 		current["pc_signup"] = 0
 	elif status == SUCCESS:
 		current["pc_signup"] = 1
-	current["pc_order"]= []
+	# current["pc_order"]= []
 	temp = {email:current}
 	local_db.update(temp)
 
@@ -62,15 +62,13 @@ def update_order_c_pending(local_db, filename):
 	
 	#write to the file
 	current = local_db.get(email)
-	if current.get("pc order") is None:
-		current["pc_order"] = []
 	current["pc_order"].append(orderid + " " + status)
 	temp = {email: current}
 	local_db.update(temp)
 
 
 def main():
-	with open(SIGNUP_CENTRAL_DIRECTORY,'r') as local_db_file:  	#open the new users json file
+	with open(CONFIRMATIONS_DB,'r') as local_db_file:  	#open the new users json file
 			local_db_data = local_db_file.read()
 	loaded_local_db = json.loads(local_db_data)
 
@@ -85,7 +83,7 @@ def main():
 			signup_response.append(file)
 
 	update_pending_confirmation(loaded_local_db,signup_response, order_response)
-	with open(SIGNUP_CENTRAL_DIRECTORY,'w') as f:
+	with open(CONFIRMATIONS_DB,'w') as f:
 		json.dump(loaded_local_db, f)
 
 main()
